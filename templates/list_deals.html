@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Challenge Globant</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <div class="panel panel-primary" style="margin-left: 10%">
+      <div class="panel-heading">List deals</div>
+        <div class="panel-body">
+          <form action="" class="inline-group" method="GET">
+            <div class="row">
+              <div class="col-xs-3">
+                <label>Access token Hubspot</label>
+              </div>
+              <div class="col-xs-9">
+                <input id="token" name="token" type="text" class="textinput textInput form-control" required value="{{ token }}">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3">
+                <label>Id/name/stage/type</label>
+              </div>
+              <div class="col-xs-9">
+                <input id="parameter_search" name="parameter_search" type="text" class="textinput textInput form-control" required value="{{ parameter_search }}">
+              </div>
+              <div class="col-xs-2">
+                <button type="submit" class="btn btn-info" id="btn_search"> <i class="fa fa-search"></i> Search</button>
+              </div>
+            </div>
+          </form>
+          <hr>
+          <table class="table table-responsive table-hover table-striped table-bordered" id="table" style="width: 100%;display: inline-block;">
+            <thead class="custom-header">
+              <tr>
+                <th style="width: 5%">Id</th>
+                <th>Name</th>
+                <th>Stage</th>
+                <th style="width: 35%">Close date</th>
+                <th>Amount</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+  <script>
+    var urlDataBusqueda = "{% url 'core:list_deals_api' %}?parameter_search={{ parameter_search|safe }}?token={{ token|safe }}";
+    var urlData = "{% url 'core:list_deals_api' %}?";
+    $(document).ready(function () {
+      parameterSearch = $("#parameter_search");
+      token = $("#token");
+      buttonSearch = $("#btn_search");
+      var tabla = "";
+      if ($("#table").length){
+        tabla = $("#table").DataTable({
+          "processing": true,
+          "bSort": false,
+          "searching": false,
+          "pagingType": "full_numbers",
+          "serverSide": true,
+          "ajax"      : urlDataBusqueda,
+          "language":{
+            "sLoadingRecords": "Loading...",
+            "sProcessing": "Loading...",
+          }
+        });
+      }
+
+
+      buttonSearch.on("click", function (e) {
+        e.preventDefault();
+        tabla.ajax.url(urlData + "parameter_search=" + parameterSearch.val() + "&token=" + token.val()
+        ).load();
+      })
+
+    });
+
+  </script>
+
+  </body>
+</html>
